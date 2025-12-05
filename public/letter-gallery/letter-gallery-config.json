@@ -1,0 +1,24 @@
+{
+  "backgroundImage": "background.jpg",
+  "randomOrder": false,
+  "letterList": [
+    {
+      "imageSrc": "/img/letter/20251205161935_299_1.jpg",
+      "nameTag": "最喜欢的一张🥰",
+      "timeTag": "2025.11.30",
+      "herf": ""
+    },
+    {
+      "imageSrc": "/img/letter/20251205161937_300_1.jpg",
+      "nameTag": "生日快乐小猪猪🥰",
+      "timeTag": "2025.11.30",
+      "herf": ""
+    },
+    {
+      "imageSrc": "/img/letter/20251205161939_301_1.jpg",
+      "nameTag": "甜蜜时刻💕",
+      "timeTag": "2025.11.30",
+      "herf": ""
+    }
+  ]
+}

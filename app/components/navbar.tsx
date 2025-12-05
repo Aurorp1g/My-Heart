@@ -13,7 +13,7 @@ export default function Navbar() {
         {/* Logo */}
         <div className={styles.logo}>
           <Link href="/" className={styles.logoLink}>
-            <span className={styles.logoText}>Gallery Wall</span>
+            <span className={styles.logoText}>My Heart</span>
           </Link>
         </div>
 
@@ -23,10 +23,10 @@ export default function Navbar() {
             首页
           </Link>
           <Link href="/gallery-wall" className={styles.menuLink}>
-            画廊
+            照片墙
           </Link>
-          <Link href="/about" className={styles.menuLink}>
-            关于
+          <Link href="/letter-gallery" className={styles.menuLink}>
+            信廊
           </Link>
         </div>
 
@@ -46,10 +46,10 @@ export default function Navbar() {
             首页
           </Link>
           <Link href="/gallery-wall" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
-            画廊
+            照片墙
           </Link>
-          <Link href="/about" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
-            关于
+          <Link href="/letter-gallery" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
+            信廊
           </Link>
         </div>
       </div>

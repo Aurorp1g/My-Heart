@@ -1,132 +1,95 @@
 "use client";
 
-import { FramedPictureProps } from "./gallery-wall/components/framed-picture";
-import GalleryWall from "./gallery-wall/components/gallery-wall";
-import ImageViewer from "./gallery-wall/components/image-viewer";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Layout from "./components/layout";
-import styles from "./gallery-wall/styles.module.css";
-import { useState, useEffect } from "react";
+import styles from "./home.module.css";
 
-interface GalleryWallConfig {
-  backgroundImage: string;
-  randomOrder: boolean;
-  picturePropsList: FramedPictureProps[];
-}
+const welcomeMessage = "welcome to my heart💕";
+const typingSpeed = 100; // 打字速度（毫秒）
+const pauseTime = 2000;  // 暂停时间（毫秒）
 
 export default function Home() {
-  const [config, setConfig] = useState<GalleryWallConfig>({
-    backgroundImage: "",
-    randomOrder: false,
-    picturePropsList: [],
-  });
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout>();
 
-  const [viewerState, setViewerState] = useState<{
-    isOpen: boolean;
-    imageSrc: string;
-    nameTag: string;
-    timeTag: string;
-  }>({
-    isOpen: false,
-    imageSrc: "",
-    nameTag: "",
-    timeTag: ""
-  });
-
-  // Fetch config
-  function getGalleryWallConfig() {
-    fetch("/gallery-wall/gallery-wall-config.json")
-      .then((response) => response.json())
-      .then((data) => {
-        let result: GalleryWallConfig = {
-          backgroundImage: "",
-          randomOrder: false,
-          picturePropsList: [],
-        };
-
-        // Background image
-        if (data.backgroundImage != "" && data.backgroundImage) {
-          result.backgroundImage = data.backgroundImage;
-        }
-
-        // Random order
-        if (data.randomOrder) {
-          result.randomOrder = data.randomOrder;
-        }
-
-        // Picture props list
-        (data.pictureList as FramedPictureProps[]).forEach((props) => {
-          result.picturePropsList.push({
-            imageSrc: props.imageSrc,
-            nameTag: props.nameTag,
-            timeTag: props.timeTag,
-            herf: props.herf,
-          });
-
-          setConfig(result);
-        });
-      });
-  }
   useEffect(() => {
-    getGalleryWallConfig();
-  }, []);
+    const handleTyping = () => {
+      if (!isDeleting) {
+        // 打字效果
+        if (charIndex < welcomeMessage.length) {
+          setDisplayText(welcomeMessage.substring(0, charIndex + 1));
+          setCharIndex(charIndex + 1);
+          timerRef.current = setTimeout(handleTyping, typingSpeed);
+        } else {
+          // 打完字后暂停，然后开始删除
+          timerRef.current = setTimeout(() => setIsDeleting(true), pauseTime);
+        }
+      } else {
+        // 删除效果
+        if (charIndex > 0) {
+          setDisplayText(welcomeMessage.substring(0, charIndex - 1));
+          setCharIndex(charIndex - 1);
+          timerRef.current = setTimeout(handleTyping, typingSpeed / 2);
+        } else {
+          // 删除完成后重新开始打字
+          setIsDeleting(false);
+          timerRef.current = setTimeout(handleTyping, typingSpeed);
+        }
+      }
+    };
 
-  // Shuffle for random order
-  const shuffle = (array: FramedPictureProps[]) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
-  if (config.randomOrder) {
-    config.picturePropsList = shuffle(config.picturePropsList);
-  }
+    // 启动打字机
+    timerRef.current = setTimeout(handleTyping, typingSpeed);
 
-  const openImageViewer = (imageSrc: string, nameTag: string, timeTag: string) => {
-    setViewerState({
-      isOpen: true,
-      imageSrc,
-      nameTag,
-      timeTag
-    });
-  };
-
-  const closeImageViewer = () => {
-    setViewerState({
-      isOpen: false,
-      imageSrc: "",
-      nameTag: "",
-      timeTag: ""
-    });
-  };
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [charIndex, isDeleting]); // 只依赖charIndex和isDeleting
 
   return (
     <Layout>
-      <div className={styles.backgroundContainer}>
-        <div 
-          className={styles.backgroundImage}
-          style={{ backgroundImage: `url('${config.backgroundImage}')` }}
-        ></div>
-        <div 
-          className={styles.backgroundImage}
-          style={{ backgroundImage: `url('/background.jpg')` }}
-        ></div>
+      <div className={styles.homeContainer}>
+        {/* 打印机效果区域 */}
+        <div className={styles.printerSection}>
+          <div className={styles.printerMachine}>
+            <div className={styles.printerTop}></div>
+            <div className={styles.printerBody}>
+              <div className={styles.paperOutput}>
+                <div className={styles.typingPaper}>
+                  <span className={styles.typedText}>{displayText}</span>
+                  <span className={styles.cursor}>|</span>
+                </div>
+              </div>
+            </div>
+            <div className={styles.printerBottom}></div>
+          </div>
+          
+          <div className={styles.welcomeMessage}>
+            <h1>欢迎小猪猪~~ 🥰</h1>
+            <p>选择您想要探索的区域</p>
+          </div>
+        </div>
+
+        {/* 功能选择区域 */}
+        <div className={styles.featureGrid}>
+          <Link href="/gallery-wall" className={styles.featureCard}>
+            <div className={styles.featureIcon}>🖼️</div>
+            <h3>照片墙</h3>
+            <p>纪念我们的珍贵瞬间</p>
+          </Link>
+          
+          <Link href="/letter-gallery" className={styles.featureCard}>
+            <div className={styles.featureIcon}>💌</div>
+            <h3>信廊</h3>
+            <p>阅读我们的珍贵信件</p>
+          </Link>
+        </div>
       </div>
-      <div className={styles.contentWrapper}>
-        <GalleryWall 
-          picturePropsList={config.picturePropsList}
-          onImageClick={openImageViewer}
-        />
-      </div>
-      
-      {/* 图片查看器 - 提升到页面级别，确保z-index生效 */}
-      <ImageViewer
-        isOpen={viewerState.isOpen}
-        imageSrc={viewerState.imageSrc}
-        nameTag={viewerState.nameTag}
-        timeTag={viewerState.timeTag}
-        onClose={closeImageViewer}
-      />
     </Layout>
   );
 }
