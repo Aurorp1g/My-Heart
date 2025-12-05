@@ -2,12 +2,19 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* 防止滚动抖动 */
+  overflow: hidden;
+  position: relative;
 }
 
 .mainContent {
   flex: 1;
   padding-top: 70px; /* 导航条高度 */
   min-height: calc(100vh - 70px - 200px); /* 减去导航条和页脚高度 */
+  /* 添加平滑滚动和防止抖动 */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 /* 响应式设计 */
@@ -16,4 +23,23 @@
     padding-top: 60px;
     min-height: calc(100vh - 60px - 200px);
   }
+}
+
+/* 防止滚动条导致的弹性效果 */
+.mainContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mainContent::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.mainContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 255, 0.3);
+  border-radius: 4px;
+}
+
+.mainContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 255, 0.5);
 }

@@ -2,6 +2,7 @@
 
 import { FramedPictureProps } from "./gallery-wall/components/framed-picture";
 import GalleryWall from "./gallery-wall/components/gallery-wall";
+import ImageViewer from "./gallery-wall/components/image-viewer";
 import Layout from "./components/layout";
 import styles from "./gallery-wall/styles.module.css";
 import { useState, useEffect } from "react";
@@ -17,6 +18,18 @@ export default function Home() {
     backgroundImage: "",
     randomOrder: false,
     picturePropsList: [],
+  });
+
+  const [viewerState, setViewerState] = useState<{
+    isOpen: boolean;
+    imageSrc: string;
+    nameTag: string;
+    timeTag: string;
+  }>({
+    isOpen: false,
+    imageSrc: "",
+    nameTag: "",
+    timeTag: ""
   });
 
   // Fetch config
@@ -69,17 +82,51 @@ export default function Home() {
     config.picturePropsList = shuffle(config.picturePropsList);
   }
 
+  const openImageViewer = (imageSrc: string, nameTag: string, timeTag: string) => {
+    setViewerState({
+      isOpen: true,
+      imageSrc,
+      nameTag,
+      timeTag
+    });
+  };
+
+  const closeImageViewer = () => {
+    setViewerState({
+      isOpen: false,
+      imageSrc: "",
+      nameTag: "",
+      timeTag: ""
+    });
+  };
+
   return (
     <Layout>
-      <div
-        className={
-          styles.background + " bg-[url('" + config.backgroundImage + "')]"
-        }
-      >
-        <div className={styles.backgroundNoiseFilter}>
-          <GalleryWall picturePropsList={config.picturePropsList}></GalleryWall>
-        </div>
+      <div className={styles.backgroundContainer}>
+        <div 
+          className={styles.backgroundImage}
+          style={{ backgroundImage: `url('${config.backgroundImage}')` }}
+        ></div>
+        <div 
+          className={styles.backgroundImage}
+          style={{ backgroundImage: `url('/background.jpg')` }}
+        ></div>
       </div>
+      <div className={styles.contentWrapper}>
+        <GalleryWall 
+          picturePropsList={config.picturePropsList}
+          onImageClick={openImageViewer}
+        />
+      </div>
+      
+      {/* 图片查看器 - 提升到页面级别，确保z-index生效 */}
+      <ImageViewer
+        isOpen={viewerState.isOpen}
+        imageSrc={viewerState.imageSrc}
+        nameTag={viewerState.nameTag}
+        timeTag={viewerState.timeTag}
+        onClose={closeImageViewer}
+      />
     </Layout>
   );
 }

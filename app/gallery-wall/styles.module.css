@@ -6,6 +6,9 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  /* 添加平滑滚动和防止抖动 */
+  overflow: hidden;
+  position: relative;
 }
 
 .backgroundNoiseFilter {
@@ -15,4 +18,35 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  /* 添加平滑滚动和防止抖动 */
+  overflow: hidden;
+  position: relative;
+}
+
+/* 添加新的背景容器类，使用更稳定的固定方法 */
+.backgroundContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
 }

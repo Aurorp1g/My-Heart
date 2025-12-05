@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 防止页面弹性滚动导致的抖动 */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* 防止文本选择 */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* 防止图片和SVG元素拖动 */
+img, svg {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+/* 全局重置 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
