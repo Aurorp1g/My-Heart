@@ -1,0 +1,19 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent {
+  flex: 1;
+  padding-top: 70px; /* 导航条高度 */
+  min-height: calc(100vh - 70px - 200px); /* 减去导航条和页脚高度 */
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .mainContent {
+    padding-top: 60px;
+    min-height: calc(100vh - 60px - 200px);
+  }
+}

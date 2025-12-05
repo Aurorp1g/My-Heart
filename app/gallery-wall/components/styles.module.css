@@ -1,0 +1,135 @@
+.framedPicture {
+  background-color: white;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: relative;
+  overflow: hidden;
+}
+
+.framedPicture::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
+  opacity: 0.7;
+}
+
+.framedPictureImage {
+    max-height: 200px;
+    margin-bottom: 1.25rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.framedPicture:hover .framedPictureImage {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.framedPictureNameTag {
+    font-size: 1rem;
+    line-height: 2rem;
+    font-weight: 600;
+  color:rgb(60, 60, 60);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.framedPictureTimeTag {
+    font-size: 0.8rem;
+    line-height: 1.5rem;
+    font-weight: 300;
+  color:rgb(58, 58, 58);
+}
+
+/* 图片查看器特殊样式 */
+.imageViewerBackdrop {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+
+.imageViewerContent {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.imageViewerImage {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.imageViewerCloseButton {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  transition: all 0.3s ease;
+}
+
+.imageViewerCloseButton:hover {
+  background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+  transform: translateY(-2px);
+}
+
+/* 响应式布局优化 */
+@media (max-width: 768px) {
+  .framedPicture {
+    width: 45%;
+    margin: 0 2.5% 20px;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .framedPicture {
+    width: 90%;
+    margin: 0 5% 20px;
+  }
+}
+
+
+/* 图片查看器响应式优化 */
+@media (max-width: 768px) {
+  .imageViewerContent {
+    width: 90vw;
+    height: 70vh;
+    padding: 15px;
+  }
+  
+  .imageViewerImage {
+    max-width: 95%;
+    max-height: 60vh;
+  }
+  
+  .imageViewerInfo {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .imageViewerContent {
+    width: 95vw;
+    height: 80vh;
+    padding: 10px;
+  }
+  
+  .imageViewerCloseButton {
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+}
