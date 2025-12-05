@@ -255,7 +255,7 @@ const welcomeMessage = "welcome to my heart💕";
 ---
 
 ## 📝 许可证
-[MIT License](LICENSE) © 2025 My-Heart Project
+[MIT License](LICENSE) © 2025 Aurorp1g
 
 ---
 
