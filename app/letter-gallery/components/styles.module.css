@@ -1,26 +1,39 @@
-
 /* 信廊容器样式 - 一行一张图片 */
 .letterGalleryContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem 0;
-  gap: 2rem;
+  gap: 3rem;
 }
 
 .framedPicture {
-  background-color: white;
-  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px);
+  padding: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   overflow: hidden;
   margin-bottom: 0;
-  width: 90%;
+  width: 95%;
   max-width: 800px;
-  /* 移除旋转效果 */
-  transform: none !important;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.framedPicture:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 35px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
 }
 
 .framedPicture::before {
@@ -29,72 +42,145 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
-  opacity: 0.7;
+  opacity: 0.8;
+  border-radius: 20px 20px 0 0;
+}
+
+/* 多图片容器样式 */
+.imageListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .framedPictureImage {
     max-height: 400px;
     max-width: 100%;
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    transition: all 0.4s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .framedPicture:hover .framedPictureImage {
-  transform: scale(1.02);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transform: scale(1.03);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .framedPictureNameTag {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     line-height: 2.5rem;
-    font-weight: 600;
-    color: rgb(60, 60, 60);
+    font-weight: 700;
+    color: white;
+    text-shadow: 
+      0 2px 10px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(102, 126, 234, 0.3);
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    background-clip: text;
 }
 
 .framedPictureTimeTag {
-    font-size: 1rem;
+    font-size: 1.1rem;
     line-height: 1.8rem;
-    font-weight: 300;
-    color: rgb(58, 58, 58);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* 图片查看器特殊样式 */
 .imageViewerBackdrop {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9), rgba(240, 147, 251, 0.9));
+  backdrop-filter: blur(10px);
 }
 
 .imageViewerContent {
-  backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(30px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 35px 70px rgba(0, 0, 0, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  transition: all 0.4s ease;
+  width: 90vw;
+  height: 85vh;
+  max-width: 1400px;
+  max-height: 900px;
+  margin: 2rem;
 }
 
 .imageViewerImage {
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  transition: transform 0.2s ease;
 }
 
 .imageViewerCloseButton {
   background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
   transition: all 0.3s ease;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .imageViewerCloseButton:hover {
   background: linear-gradient(135deg, #ff8e8e, #ff6b6b);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.7);
+  transform: translateY(-2px) scale(1.1);
+}
+
+/* 工具栏样式 */
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 20;
+}
+
+.toolbarButton {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.toolbarButton:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
 }
 
 /* 响应式布局优化 */
@@ -105,8 +191,13 @@
   }
   
   .framedPicture {
-    width: 95%;
-    padding: 1.5rem;
+    width: 98%;
+    padding: 2rem;
+  }
+  
+  .imageListContainer {
+    gap: 1rem;
+    margin-bottom: 1rem;
   }
   
   .framedPictureImage {
@@ -125,8 +216,13 @@
   }
   
   .framedPicture {
-    width: 98%;
-    padding: 1rem;
+    width: 100%;
+    padding: 1.5rem;
+  }
+  
+  .imageListContainer {
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
   }
   
   .framedPictureImage {
@@ -145,8 +241,9 @@
 /* 图片查看器响应式优化 */
 @media (max-width: 768px) {
   .imageViewerContent {
-    width: 90vw;
-    height: 70vh;
+    width: 95vw;
+    height: 80vh;
+    margin: 1rem;
     padding: 15px;
   }
   
@@ -155,16 +252,22 @@
     max-height: 60vh;
   }
   
-  .imageViewerInfo {
-    font-size: 0.9rem;
-    padding: 10px;
+  .toolbar {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .toolbarButton {
+    width: 32px;
+    height: 32px;
   }
 }
 
 @media (max-width: 480px) {
   .imageViewerContent {
-    width: 95vw;
-    height: 80vh;
+    width: 98vw;
+    height: 85vh;
+    margin: 0.5rem;
     padding: 10px;
   }
   
@@ -174,5 +277,11 @@
     width: 30px;
     height: 30px;
     font-size: 18px;
+  }
+  
+  .toolbar {
+    top: 60px;
+    right: 10px;
+    flex-direction: column;
   }
 }

@@ -109,7 +109,7 @@ export default function Home() {
         ></div>
         <div 
           className={styles.backgroundImage}
-          style={{ backgroundImage: `url('/background.jpg')` }}
+          style={{ backgroundImage: `url('/bg/gallery-background.jpg')` }}
         ></div>
       </div>
       <div className={styles.contentWrapper}>

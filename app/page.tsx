@@ -57,6 +57,12 @@ export default function Home() {
         {/* 打印机效果区域 */}
         <div className={styles.printerSection}>
           <div className={styles.printerMachine}>
+            {/* 添加红绿灯控制点 */}
+            <div className={styles.trafficLights}>
+              <div className={styles.trafficLightRed}></div>
+              <div className={styles.trafficLightYellow}></div>
+              <div className={styles.trafficLightGreen}></div>
+            </div>
             <div className={styles.printerTop}></div>
             <div className={styles.printerBody}>
               <div className={styles.paperOutput}>

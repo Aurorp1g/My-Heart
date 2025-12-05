@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import styles from "./styles.module.css";
 
 interface ImageViewerProps {
@@ -12,6 +13,112 @@ interface ImageViewerProps {
 }
 
 export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClose }: ImageViewerProps) {
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 禁用页面滚动 - 简化版本
+  useEffect(() => {
+    if (isOpen) {
+      // 保存当前滚动位置
+      const scrollY = window.scrollY;
+      // 禁用滚动但不改变页面位置
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'relative';
+      // 保持页面在当前位置
+      window.scrollTo(0, scrollY);
+    } else {
+      // 恢复滚动
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+    }
+
+    // 清理函数
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+    };
+  }, [isOpen]);
+
+  // 重置状态
+  const resetState = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  // 关闭时重置
+  useEffect(() => {
+    if (!isOpen) {
+      resetState();
+    }
+  }, [isOpen]);
+
+  // 缩放功能
+  const zoomIn = () => setScale(prev => Math.min(prev + 0.2, 3));
+  const zoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.5));
+  const resetZoom = () => resetState();
+
+  // 鼠标滚轮缩放
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale(prev => Math.max(0.5, Math.min(3, prev + delta)));
+  };
+
+  // 拖拽功能
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale <= 1) return;
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || scale <= 1) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // 键盘快捷键
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      switch(e.key) {
+        case 'Escape':
+          onClose();
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          zoomIn();
+          break;
+        case '-':
+          e.preventDefault();
+          zoomOut();
+          break;
+        case '0':
+          e.preventDefault();
+          resetZoom();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -23,7 +130,8 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
           onClick={onClose}
         >
           <motion.div
-            className={`relative max-w-5xl max-h-full mx-4 ${styles.imageViewerContent}`}
+            ref={containerRef}
+            className={`relative ${styles.imageViewerContent}`}
             initial={{ scale: 0.7, opacity: 0, y: 50, rotate: -5 }}
             animate={{ scale: 1, opacity: 1, y: 0, rotate: 0 }}
             exit={{ scale: 0.7, opacity: 0, y: 50, rotate: 5 }}
@@ -38,6 +146,39 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
             {/* 装饰元素 */}
             <div className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-60 blur-sm"></div>
             <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-yellow-400 to-red-400 rounded-full opacity-40 blur-sm"></div>
+            
+            {/* 控制工具栏 */}
+            <div className={`absolute top-4 right-4 flex gap-2 z-20 ${styles.toolbar}`}>
+              <motion.button
+                className={`${styles.toolbarButton}`}
+                onClick={zoomOut}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title="缩小"
+              >
+                <i className="fa-solid fa-magnifying-glass-minus"></i>
+              </motion.button>
+              
+              <motion.button
+                className={`${styles.toolbarButton}`}
+                onClick={resetZoom}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title="重置"
+              >
+                <span className="text-xs font-bold">1:1</span>
+              </motion.button>
+              
+              <motion.button
+                className={`${styles.toolbarButton}`}
+                onClick={zoomIn}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title="放大"
+              >
+                <i className="fa-solid fa-magnifying-glass-plus"></i>
+              </motion.button>
+            </div>
             
             {/* 关闭按钮 */}
             <motion.button
@@ -58,14 +199,27 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               {/* 图片装饰边框 */}
-              <div className="rounded-2xl overflow-hidden">
-                <motion.img
+              <div 
+                className="rounded-2xl overflow-hidden cursor-move"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={handleWheel}
+                style={{ cursor: scale > 1 ? 'grab' : 'default' }}
+              >
+                {/* 使用普通img元素而不是motion.img，避免动画冲突 */}
+                <img
+                  ref={imageRef}
                   src={imageSrc}
                   alt={nameTag}
                   className={`w-full max-h-[70vh] object-contain ${styles.imageViewerImage}`}
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+                  style={{
+                    transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+                    transformOrigin: 'center center',
+                    transition: 'transform 0.2s ease'
+                  }}
+                  draggable={false}
                 />
               </div>
               
@@ -101,15 +255,27 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
               )}
             </motion.div>
 
-            {/* 底部提示 */}
+            {/* 操作提示 */}
             <motion.div 
-              className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-white/60 text-sm font-light"
+              className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 text-white/60 text-sm font-light text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              ✨ 点击背景关闭 ✨
+              <div>✨ 滚轮缩放 • 拖拽移动 • 点击背景关闭 ✨</div>
+              <div className="text-xs mt-1">快捷键: +放大 -缩小 0重置 Esc关闭</div>
             </motion.div>
+
+            {/* 缩放指示器 */}
+            {scale !== 1 && (
+              <motion.div 
+                className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-mono z-20"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                {Math.round(scale * 100)}%
+              </motion.div>
+            )}
           </motion.div>
         </motion.div>
       )}

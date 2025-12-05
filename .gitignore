@@ -34,3 +34,10 @@ yarn-error.log*
 next-env.d.ts
 
 public/img
+
+batch_compress_images.py
+compressed
+
+public/img/
+public/gallery-wall/gallery-wall-config.json
+public/letter-gallery/letter-gallery-config.json

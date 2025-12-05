@@ -16,7 +16,7 @@ export default function GalleryWall(props: GalleryWallProps) {
         {props.picturePropsList.map((pictureProps, index) => (
           <FramedPicture
             key={pictureProps.nameTag + index.toString()}
-            imageSrc={pictureProps.imageSrc}
+            imageList={pictureProps.imageList}
             nameTag={pictureProps.nameTag}
             timeTag={pictureProps.timeTag}
             rotate={0} // 强制不倾斜
@@ -25,8 +25,10 @@ export default function GalleryWall(props: GalleryWallProps) {
               if (pictureProps.herf && pictureProps.herf !== "") {
                 window.open(pictureProps.herf, "_blank");
               } else {
-                // 否则调用父组件的图片查看器打开函数
-                props.onImageClick(pictureProps.imageSrc, pictureProps.nameTag, pictureProps.timeTag);
+                // 否则调用父组件的图片查看器打开函数（默认显示第一张图片）
+                if (pictureProps.imageList.length > 0) {
+                  props.onImageClick(pictureProps.imageList[0], pictureProps.nameTag, pictureProps.timeTag);
+                }
               }
             }}
           ></FramedPicture>

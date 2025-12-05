@@ -12,7 +12,7 @@
 }
 
 .backgroundNoiseFilter {
-  background-image: url("/background.jpg");
+  background-image: url("/bg/gallery-background.jpg");
   min-height: 100vh;
   background-attachment: fixed;
   background-position: center;
@@ -49,4 +49,5 @@
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  margin-top: 100px;
 }

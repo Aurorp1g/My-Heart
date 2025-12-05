@@ -53,17 +53,17 @@ export default function LetterGalleryPage() {
           result.randomOrder = data.randomOrder;
         }
 
-        // Letter props list
-        (data.letterList as FramedPictureProps[]).forEach((props) => {
+        // Letter props list - 适配新的多图片数据结构
+        (data.letterList as any[]).forEach((props) => {
           result.letterPropsList.push({
-            imageSrc: props.imageSrc,
+            imageList: props.imageList || [props.imageSrc], // 兼容旧格式
             nameTag: props.nameTag,
             timeTag: props.timeTag,
             herf: props.herf,
           });
-
-          setConfig(result);
         });
+
+        setConfig(result);
       });
   }
   useEffect(() => {
@@ -78,9 +78,8 @@ export default function LetterGalleryPage() {
     }
     return array;
   };
-  if (config.randomOrder) {
-    config.letterPropsList = shuffle(config.letterPropsList);
-  }
+
+  const letterPropsList = config.randomOrder ? shuffle([...config.letterPropsList]) : config.letterPropsList;
 
   const openImageViewer = (imageSrc: string, nameTag: string, timeTag: string) => {
     setViewerState({
@@ -109,7 +108,7 @@ export default function LetterGalleryPage() {
         ></div>
         <div 
           className={styles.backgroundImage}
-          style={{ backgroundImage: `url('/background.jpg')` }}
+          style={{ backgroundImage: `url('/bg/letter-background.jpg')` }}
         ></div>
       </div>
       <div className={styles.contentWrapper}>
@@ -118,7 +117,7 @@ export default function LetterGalleryPage() {
           <p>这里收藏着我的信件</p>
         </div>
         <GalleryWall 
-          picturePropsList={config.letterPropsList}
+          picturePropsList={letterPropsList}
           onImageClick={openImageViewer}
         />
       </div>

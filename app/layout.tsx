@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gallery Wall - Aurorp1g",
-  description: "Aurorp1g's personal gallery wall website",
+  title: "My Heart - Aurorp1g",
+  description: "Aurorp1g's personal heart website",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <head>
         <link
           rel="stylesheet"

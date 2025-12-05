@@ -2,11 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 字体css */
+@font-face{
+  font-family: 'xwwk'; 
+  font-display: swap;
+  src: url('/woff/霞鹜文楷.woff2') format("woff2");
+}
+
 /* 防止页面弹性滚动导致的抖动 */
 html, body {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  font-family: 'xwwk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* 防止文本选择 */

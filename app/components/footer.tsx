@@ -14,7 +14,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
         <p id={styles.footerCopyright}>
-          &copy; {currentYear} BY Aurorp1g. 保留所有权利.
+          &copy; {currentYear} BY Aurorp1g. 小猪猪专属🐷.
         </p>
         <div className={styles.footerLinks}>
           <a href="https://github.com/Aurorp1g" target="_blank" rel="noopener noreferrer">
