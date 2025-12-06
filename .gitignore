@@ -41,3 +41,4 @@ compressed
 public/img/
 public/gallery-wall/gallery-wall-config.json
 public/letter-gallery/letter-gallery-config.json
+scripts/deploy.js

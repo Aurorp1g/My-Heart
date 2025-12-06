@@ -1,6 +1,5 @@
 .homeContainer {
   min-height: 100vh;
-  background: url('/bg/home-background.jpg') center/cover no-repeat fixed;
   display: flex;
   flex-direction: column;
   align-items: center;

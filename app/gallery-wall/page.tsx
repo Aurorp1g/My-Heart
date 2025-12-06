@@ -14,6 +14,7 @@ interface GalleryWallConfig {
 }
 
 export default function Home() {
+  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
   const [config, setConfig] = useState<GalleryWallConfig>({
     backgroundImage: "",
     randomOrder: false,
@@ -34,7 +35,7 @@ export default function Home() {
 
   // Fetch config
   function getGalleryWallConfig() {
-    fetch("/gallery-wall/gallery-wall-config.json")
+    fetch(`${assetPrefix}/gallery-wall/gallery-wall-config.json`)
       .then((response) => response.json())
       .then((data) => {
         let result: GalleryWallConfig = {
@@ -56,7 +57,7 @@ export default function Home() {
         // Picture props list
         (data.pictureList as FramedPictureProps[]).forEach((props) => {
           result.picturePropsList.push({
-            imageSrc: props.imageSrc,
+            imageSrc: `${assetPrefix}${props.imageSrc}`,
             nameTag: props.nameTag,
             timeTag: props.timeTag,
             herf: props.herf,
@@ -109,7 +110,7 @@ export default function Home() {
         ></div>
         <div 
           className={styles.backgroundImage}
-          style={{ backgroundImage: `url('/bg/gallery-background.jpg')` }}
+          style={{ backgroundImage: `url('${assetPrefix}/bg/gallery-background.jpg')` }}
         ></div>
       </div>
       <div className={styles.contentWrapper}>

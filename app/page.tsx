@@ -14,6 +14,8 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [charIndex, setCharIndex] = useState(0);
   const timerRef = useRef<NodeJS.Timeout>();
+  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
+  const backgroundImage = `url('${assetPrefix}/bg/home-background.jpg')`
 
   useEffect(() => {
     const handleTyping = () => {
@@ -53,7 +55,10 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className={styles.homeContainer}>
+      <div 
+        className={styles.homeContainer}
+        style={{ 
+          background: `${backgroundImage} center/cover no-repeat fixed` }}>
         {/* 打印机效果区域 */}
         <div className={styles.printerSection}>
           <div className={styles.printerMachine}>

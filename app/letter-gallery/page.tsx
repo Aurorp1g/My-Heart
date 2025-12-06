@@ -14,6 +14,7 @@ interface LetterGalleryConfig {
 }
 
 export default function LetterGalleryPage() {
+  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
   const [config, setConfig] = useState<LetterGalleryConfig>({
     backgroundImage: "",
     randomOrder: false,
@@ -34,7 +35,7 @@ export default function LetterGalleryPage() {
 
   // Fetch config
   function getLetterGalleryConfig() {
-    fetch("/letter-gallery/letter-gallery-config.json")
+    fetch(`${assetPrefix}/letter-gallery/letter-gallery-config.json`)
       .then((response) => response.json())
       .then((data) => {
         let result: LetterGalleryConfig = {
@@ -55,8 +56,15 @@ export default function LetterGalleryPage() {
 
         // Letter props list - 适配新的多图片数据结构
         (data.letterList as any[]).forEach((props) => {
+          // 处理多图片路径，为每个图片路径添加动态前缀
+          const imageList = props.imageList 
+            ? props.imageList.map((img: string) => `${assetPrefix}${img}`)
+            : props.imageSrc 
+              ? [`${assetPrefix}${props.imageSrc}`] // 兼容旧格式
+              : [];
+
           result.letterPropsList.push({
-            imageList: props.imageList || [props.imageSrc], // 兼容旧格式
+            imageList: imageList,
             nameTag: props.nameTag,
             timeTag: props.timeTag,
             herf: props.herf,
@@ -108,7 +116,7 @@ export default function LetterGalleryPage() {
         ></div>
         <div 
           className={styles.backgroundImage}
-          style={{ backgroundImage: `url('/bg/letter-background.jpg')` }}
+          style={{ backgroundImage: `url('${assetPrefix}/bg/letter-background.jpg')` }}
         ></div>
       </div>
       <div className={styles.contentWrapper}>
