@@ -146,8 +146,30 @@ public/img/gallery/background.jpg
 public/img/gallery/photo1.jpg
 public/img/gallery/photo2.jpg
 ```
+### 7️⃣ 配置路径
+在 `next.config.mjs` 文件中代码根据自身需求更改：
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  basePath: '',// 部署到子路径时需要设置（如Github部署项目网站，需要改成自己的仓库名,如'/My-Heart'）
+  assetPrefix: '/',//设置静态资源（CSS、JS、图片等）的前缀路径,如'/My-Heart/'
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+  env: {
+    NEXT_PUBLIC_ASSET_PREFIX: "",//静态资源前缀环境变量,同basePath的配置，如'/My-Heart'
+  },
+};
+export default nextConfig;
 
-### 7️⃣ 运行项目
+// next.js默认使用绝对路径，所以正常本地开发时，网站的入口是：http://localhost:3000/
+// 注意，如果上面的配置更改了，那么网站的入口也会改变，如示例本地开发时：http://localhost:3000/My-Heart/
+
+```
+
+### 8️⃣ 运行项目
 ```bash
 # 开发模式
 npm run dev
@@ -185,6 +207,7 @@ my-heart/
 │   ├── home.module.css     # 首页样式
 │   ├── pages/              # 首页
 │   └── layout.tsx          # 根布局
+├── scripts/                # 扩展脚本
 ├── public/                 # 静态资源
 │   ├── img/                # 图片资源
 │   │   └── gallery/        # 照片墙图片（需手动创建）
@@ -230,16 +253,6 @@ const welcomeMessage = "welcome to my heart💕";
   "nameTag": "新回忆🌟",
   "timeTag": "2024-03-08",
   "herf": ""
-}
-```
-
-### 修改主题颜色
-编辑CSS变量或直接修改样式文件中的颜色值：
-
-```css
-/* 在相应的CSS模块文件中修改 */
-.printerMachine {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
 }
 ```
 
