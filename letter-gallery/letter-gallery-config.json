@@ -1,0 +1,31 @@
+{
+  "backgroundImage": "/bg/letter-background.jpg",
+  "randomOrder": false,
+  "letterList": [
+    {
+      "imageList": [
+        "/img/letter/20251205161935_299_1.jpg",
+        "/img/letter/20251205161937_300_1.jpg"
+      ],
+      "nameTag": "给小猪猪的贺卡🥰",
+      "timeTag": "2025.11.30",
+      "herf": ""
+    },
+    {
+      "imageList": [
+        "/img/letter/20251205161939_301_1.jpg"
+      ],
+      "nameTag": "小猪猪加油💕",
+      "timeTag": "2025.12.03",
+      "herf": ""
+    },
+    {
+      "imageList": [
+        "/img/letter/20251128220330_274_1.jpg"
+      ],
+      "nameTag": "小猪猪写给我的🥰",
+      "timeTag": "2025.12.03",
+      "herf": ""
+    }
+  ]
+}
