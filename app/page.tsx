@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Layout from "./components/layout";
 import styles from "./home.module.css";
+import ClientAuthGuard from "./components/client-auth-guard";
 
 const welcomeMessage = "welcome to my heart💕";
 const typingSpeed = 100; // 打字速度（毫秒）
@@ -54,53 +55,55 @@ export default function Home() {
   }, [charIndex, isDeleting]); // 只依赖charIndex和isDeleting
 
   return (
-    <Layout>
-      <div 
-        className={styles.homeContainer}
-        style={{ 
-          background: `${backgroundImage} center/cover no-repeat fixed` }}>
-        {/* 打印机效果区域 */}
-        <div className={styles.printerSection}>
-          <div className={styles.printerMachine}>
-            {/* 添加红绿灯控制点 */}
-            <div className={styles.trafficLights}>
-              <div className={styles.trafficLightRed}></div>
-              <div className={styles.trafficLightYellow}></div>
-              <div className={styles.trafficLightGreen}></div>
-            </div>
-            <div className={styles.printerTop}></div>
-            <div className={styles.printerBody}>
-              <div className={styles.paperOutput}>
-                <div className={styles.typingPaper}>
-                  <span className={styles.typedText}>{displayText}</span>
-                  <span className={styles.cursor}>|</span>
+    <ClientAuthGuard>
+      <Layout>
+        <div 
+          className={styles.homeContainer}
+          style={{ 
+            background: `${backgroundImage} center/cover no-repeat fixed` }}>
+          {/* 打印机效果区域 */}
+          <div className={styles.printerSection}>
+            <div className={styles.printerMachine}>
+              {/* 添加红绿灯控制点 */}
+              <div className={styles.trafficLights}>
+                <div className={styles.trafficLightRed}></div>
+                <div className={styles.trafficLightYellow}></div>
+                <div className={styles.trafficLightGreen}></div>
+              </div>
+              <div className={styles.printerTop}></div>
+              <div className={styles.printerBody}>
+                <div className={styles.paperOutput}>
+                  <div className={styles.typingPaper}>
+                    <span className={styles.typedText}>{displayText}</span>
+                    <span className={styles.cursor}>|</span>
+                  </div>
                 </div>
               </div>
+              <div className={styles.printerBottom}></div>
             </div>
-            <div className={styles.printerBottom}></div>
+            
+            <div className={styles.welcomeMessage}>
+              <h1>欢迎小猪猪~~ 🥰</h1>
+              <p>选择您想要探索的区域</p>
+            </div>
           </div>
-          
-          <div className={styles.welcomeMessage}>
-            <h1>欢迎小猪猪~~ 🥰</h1>
-            <p>选择您想要探索的区域</p>
-          </div>
-        </div>
 
-        {/* 功能选择区域 */}
-        <div className={styles.featureGrid}>
-          <Link href="/gallery-wall" className={styles.featureCard}>
-            <div className={styles.featureIcon}>🖼️</div>
-            <h3>照片墙</h3>
-            <p>纪念我们的珍贵瞬间</p>
-          </Link>
-          
-          <Link href="/letter-gallery" className={styles.featureCard}>
-            <div className={styles.featureIcon}>💌</div>
-            <h3>信廊</h3>
-            <p>阅读我们的珍贵信件</p>
-          </Link>
+          {/* 功能选择区域 */}
+          <div className={styles.featureGrid}>
+            <Link href="/gallery-wall" className={styles.featureCard}>
+              <div className={styles.featureIcon}>🖼️</div>
+              <h3>照片墙</h3>
+              <p>纪念我们的珍贵瞬间</p>
+            </Link>
+            
+            <Link href="/letter-gallery" className={styles.featureCard}>
+              <div className={styles.featureIcon}>💌</div>
+              <h3>信廊</h3>
+              <p>阅读我们的珍贵信件</p>
+            </Link>
+          </div>
         </div>
-      </div>
-    </Layout>
+      </Layout>
+    </ClientAuthGuard>
   );
 }

@@ -5,6 +5,7 @@ import GalleryWall from "./components/letter-gallery";
 import ImageViewer from "./components/image-viewer";
 import Layout from "../components/layout";
 import styles from "./styles.module.css";
+import ClientAuthGuard from "../components/client-auth-guard";
 import { useState, useEffect } from "react";
 
 interface LetterGalleryConfig {
@@ -108,36 +109,38 @@ export default function LetterGalleryPage() {
   };
 
   return (
-    <Layout>
-      <div className={styles.backgroundContainer}>
-        <div 
-          className={styles.backgroundImage}
-          style={{ backgroundImage: `url('${config.backgroundImage}')` }}
-        ></div>
-        <div 
-          className={styles.backgroundImage}
-          style={{ backgroundImage: `url('${assetPrefix}/bg/letter-background.jpg')` }}
-        ></div>
-      </div>
-      <div className={styles.contentWrapper}>
-        <div className={styles.pageHeader}>
-          <h1>信廊</h1>
-          <p>这里收藏着我的信件</p>
+    <ClientAuthGuard>
+      <Layout>
+        <div className={styles.backgroundContainer}>
+          <div 
+            className={styles.backgroundImage}
+            style={{ backgroundImage: `url('${config.backgroundImage}')` }}
+          ></div>
+          <div 
+            className={styles.backgroundImage}
+            style={{ backgroundImage: `url('${assetPrefix}/bg/letter-background.jpg')` }}
+          ></div>
         </div>
-        <GalleryWall 
-          picturePropsList={letterPropsList}
-          onImageClick={openImageViewer}
+        <div className={styles.contentWrapper}>
+          <div className={styles.pageHeader}>
+            <h1>信廊</h1>
+            <p>这里收藏着我的信件</p>
+          </div>
+          <GalleryWall 
+            picturePropsList={letterPropsList}
+            onImageClick={openImageViewer}
+          />
+        </div>
+        
+        {/* 图片查看器 */}
+        <ImageViewer
+          isOpen={viewerState.isOpen}
+          imageSrc={viewerState.imageSrc}
+          nameTag={viewerState.nameTag}
+          timeTag={viewerState.timeTag}
+          onClose={closeImageViewer}
         />
-      </div>
-      
-      {/* 图片查看器 */}
-      <ImageViewer
-        isOpen={viewerState.isOpen}
-        imageSrc={viewerState.imageSrc}
-        nameTag={viewerState.nameTag}
-        timeTag={viewerState.timeTag}
-        onClose={closeImageViewer}
-      />
-    </Layout>
+      </Layout>
+    </ClientAuthGuard>
   );
 }
