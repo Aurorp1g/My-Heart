@@ -27,11 +27,15 @@ export default function Home() {
     imageSrc: string;
     nameTag: string;
     timeTag: string;
+    imageList: string[]; // 新增：图片列表
+    currentIndex: number; // 新增：当前索引
   }>({
     isOpen: false,
     imageSrc: "",
     nameTag: "",
-    timeTag: ""
+    timeTag: "",
+    imageList: [],
+    currentIndex: 0
   });
 
   // Fetch config
@@ -84,12 +88,36 @@ export default function Home() {
     config.picturePropsList = shuffle(config.picturePropsList);
   }
 
+  // 获取所有图片的URL列表
+  const getAllImageUrls = () => {
+    return config.picturePropsList.map(picture => picture.imageSrc);
+  };
+
+  // 根据图片URL查找索引和图片信息
+  const findImageInfo = (imageSrc: string) => {
+    const index = config.picturePropsList.findIndex(picture => picture.imageSrc === imageSrc);
+    if (index !== -1) {
+      const picture = config.picturePropsList[index];
+      return {
+        index,
+        nameTag: picture.nameTag,
+        timeTag: picture.timeTag
+      };
+    }
+    return null;
+  };
+
   const openImageViewer = (imageSrc: string, nameTag: string, timeTag: string) => {
+    const imageList = getAllImageUrls();
+    const imageInfo = findImageInfo(imageSrc);
+    
     setViewerState({
       isOpen: true,
       imageSrc,
       nameTag,
-      timeTag
+      timeTag,
+      imageList,
+      currentIndex: imageInfo?.index || 0
     });
   };
 
@@ -98,8 +126,42 @@ export default function Home() {
       isOpen: false,
       imageSrc: "",
       nameTag: "",
-      timeTag: ""
+      timeTag: "",
+      imageList: [],
+      currentIndex: 0
     });
+  };
+
+  // 切换到上一张图片
+  const goToPrevImage = () => {
+    if (viewerState.currentIndex > 0) {
+      const newIndex = viewerState.currentIndex - 1;
+      const picture = config.picturePropsList[newIndex];
+      
+      setViewerState(prev => ({
+        ...prev,
+        imageSrc: picture.imageSrc,
+        nameTag: picture.nameTag,
+        timeTag: picture.timeTag,
+        currentIndex: newIndex
+      }));
+    }
+  };
+
+  // 切换到下一张图片
+  const goToNextImage = () => {
+    if (viewerState.currentIndex < config.picturePropsList.length - 1) {
+      const newIndex = viewerState.currentIndex + 1;
+      const picture = config.picturePropsList[newIndex];
+      
+      setViewerState(prev => ({
+        ...prev,
+        imageSrc: picture.imageSrc,
+        nameTag: picture.nameTag,
+        timeTag: picture.timeTag,
+        currentIndex: newIndex
+      }));
+    }
   };
 
   return (
@@ -129,6 +191,10 @@ export default function Home() {
           nameTag={viewerState.nameTag}
           timeTag={viewerState.timeTag}
           onClose={closeImageViewer}
+          imageList={viewerState.imageList}
+          currentIndex={viewerState.currentIndex}
+          onPrev={goToPrevImage}
+          onNext={goToNextImage}
         />
       </Layout>
     </ClientAuthGuard>

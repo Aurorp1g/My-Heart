@@ -10,15 +10,33 @@ interface ImageViewerProps {
   nameTag: string;
   timeTag: string;
   onClose: () => void;
+  imageList?: string[]; // 新增：图片列表
+  currentIndex?: number; // 新增：当前图片索引
+  onPrev?: () => void; // 新增：上一张回调
+  onNext?: () => void; // 新增：下一张回调
 }
 
-export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClose }: ImageViewerProps) {
+export default function ImageViewer({ 
+  isOpen, 
+  imageSrc, 
+  nameTag, 
+  timeTag, 
+  onClose,
+  imageList = [],
+  currentIndex = 0,
+  onPrev,
+  onNext 
+}: ImageViewerProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 计算是否有上一张/下一张
+  const hasPrev = imageList.length > 0 && currentIndex > 0;
+  const hasNext = imageList.length > 0 && currentIndex < imageList.length - 1;
 
   // 禁用页面滚动 - 简化版本
   useEffect(() => {
@@ -112,12 +130,20 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
           e.preventDefault();
           resetZoom();
           break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (hasPrev && onPrev) onPrev();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (hasNext && onNext) onNext();
+          break;
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, hasPrev, hasNext, onPrev, onNext]);
 
   return (
     <AnimatePresence>
@@ -192,6 +218,51 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
               </svg>
             </motion.button>
             
+            {/* 上一张/下一张导航按钮 */}
+            {imageList.length > 1 && (
+              <>
+                {/* 上一张按钮 */}
+                {hasPrev && (
+                  <motion.button
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 z-20 rounded-full p-4 text-white text-2xl ${styles.navButton}`}
+                    onClick={onPrev}
+                    whileHover={{ scale: 1.15, x: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                    title="上一张 (←)"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </motion.button>
+                )}
+                
+                {/* 下一张按钮 */}
+                {hasNext && (
+                  <motion.button
+                    className={`absolute right-4 top-1/2 transform -translate-y-1/2 z-20 rounded-full p-4 text-white text-2xl ${styles.navButton}`}
+                    onClick={onNext}
+                    whileHover={{ scale: 1.15, x: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    title="下一张 (→)"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </motion.button>
+                )}
+                
+                {/* 图片计数器 */}
+                <motion.div 
+                  className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-1 rounded-full text-sm font-medium z-20"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {currentIndex + 1} / {imageList.length}
+                </motion.div>
+              </>
+            )}
+            
             {/* 图片容器 */}
             <motion.div 
               className="p-6"
@@ -263,7 +334,7 @@ export default function ImageViewer({ isOpen, imageSrc, nameTag, timeTag, onClos
               transition={{ delay: 0.6 }}
             >
               <div>✨ 滚轮缩放 • 拖拽移动 • 点击背景关闭 ✨</div>
-              <div className="text-xs mt-1">快捷键: +放大 -缩小 0重置 Esc关闭</div>
+              <div className="text-xs mt-1">快捷键: +放大 -缩小 0重置 Esc关闭 ←→切换</div>
             </motion.div>
 
             {/* 缩放指示器 */}

@@ -27,11 +27,15 @@ export default function LetterGalleryPage() {
     imageSrc: string;
     nameTag: string;
     timeTag: string;
+    imageList: string[]; // 新增：图片列表
+    currentIndex: number; // 新增：当前索引
   }>({
     isOpen: false,
     imageSrc: "",
     nameTag: "",
-    timeTag: ""
+    timeTag: "",
+    imageList: [],
+    currentIndex: 0
   });
 
   // Fetch config
@@ -90,12 +94,50 @@ export default function LetterGalleryPage() {
 
   const letterPropsList = config.randomOrder ? shuffle([...config.letterPropsList]) : config.letterPropsList;
 
+  // 获取所有图片的URL列表（展平所有相框的图片）
+  const getAllImageUrls = () => {
+    const allImages: string[] = [];
+    letterPropsList.forEach(letter => {
+      if (letter.imageList && letter.imageList.length > 0) {
+        allImages.push(...letter.imageList);
+      }
+    });
+    return allImages;
+  };
+
+  // 根据图片URL查找索引和图片信息
+  const findImageInfo = (imageSrc: string) => {
+    const allImages = getAllImageUrls();
+    const index = allImages.findIndex(img => img === imageSrc);
+    
+    if (index !== -1) {
+      // 查找对应的相框信息
+      const letter = letterPropsList.find(letter => 
+        letter.imageList && letter.imageList.includes(imageSrc)
+      );
+      
+      if (letter) {
+        return {
+          index,
+          nameTag: letter.nameTag,
+          timeTag: letter.timeTag
+        };
+      }
+    }
+    return null;
+  };
+
   const openImageViewer = (imageSrc: string, nameTag: string, timeTag: string) => {
+    const imageList = getAllImageUrls();
+    const imageInfo = findImageInfo(imageSrc);
+    
     setViewerState({
       isOpen: true,
       imageSrc,
       nameTag,
-      timeTag
+      timeTag,
+      imageList,
+      currentIndex: imageInfo?.index || 0
     });
   };
 
@@ -104,8 +146,48 @@ export default function LetterGalleryPage() {
       isOpen: false,
       imageSrc: "",
       nameTag: "",
-      timeTag: ""
+      timeTag: "",
+      imageList: [],
+      currentIndex: 0
     });
+  };
+
+  // 切换到上一张图片
+  const goToPrevImage = () => {
+    if (viewerState.currentIndex > 0) {
+      const newIndex = viewerState.currentIndex - 1;
+      const imageSrc = viewerState.imageList[newIndex];
+      const imageInfo = findImageInfo(imageSrc);
+      
+      if (imageInfo) {
+        setViewerState(prev => ({
+          ...prev,
+          imageSrc,
+          nameTag: imageInfo.nameTag,
+          timeTag: imageInfo.timeTag,
+          currentIndex: newIndex
+        }));
+      }
+    }
+  };
+
+  // 切换到下一张图片
+  const goToNextImage = () => {
+    if (viewerState.currentIndex < viewerState.imageList.length - 1) {
+      const newIndex = viewerState.currentIndex + 1;
+      const imageSrc = viewerState.imageList[newIndex];
+      const imageInfo = findImageInfo(imageSrc);
+      
+      if (imageInfo) {
+        setViewerState(prev => ({
+          ...prev,
+          imageSrc,
+          nameTag: imageInfo.nameTag,
+          timeTag: imageInfo.timeTag,
+          currentIndex: newIndex
+        }));
+      }
+    }
   };
 
   return (
@@ -139,6 +221,10 @@ export default function LetterGalleryPage() {
           nameTag={viewerState.nameTag}
           timeTag={viewerState.timeTag}
           onClose={closeImageViewer}
+          imageList={viewerState.imageList}
+          currentIndex={viewerState.currentIndex}
+          onPrev={goToPrevImage}
+          onNext={goToNextImage}
         />
       </Layout>
     </ClientAuthGuard>
