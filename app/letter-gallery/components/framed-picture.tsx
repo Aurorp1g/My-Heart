@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 const nameTagFont = Oswald({ subsets: ["latin"] });
 
 export interface FramedPictureProps {
-  onClick?: () => void;
+  onClick?: (imageSrc: string, nameTag: string, timeTag: string) => void;
   imageList: string[];
   nameTag: string;
   timeTag: string;
@@ -19,6 +19,21 @@ export default function FramedPicture(props: FramedPictureProps) {
   function getRandom(min: number, max: number): number {
     return Math.random() * (max - min) + min;
   }
+
+  // 处理图片点击事件
+  const handleImageClick = (imageSrc: string) => {
+    if (props.onClick) {
+      props.onClick(imageSrc, props.nameTag, props.timeTag);
+    }
+  };
+
+  // 处理整个相框的点击事件（用于外部链接）
+  const handleFrameClick = () => {
+    // 如果有外部链接，在新窗口打开
+    if (props.herf && props.herf !== "") {
+      window.open(props.herf, "_blank");
+    }
+  };
 
   return (
     <motion.div
@@ -35,7 +50,7 @@ export default function FramedPicture(props: FramedPictureProps) {
         right: 0,
         bottom: 0,
       }}
-      onClick={props.onClick}
+      onClick={handleFrameClick}
     >
       <div className={styles.imageListContainer}>
         {props.imageList.map((imageSrc, index) => (
@@ -48,6 +63,11 @@ export default function FramedPicture(props: FramedPictureProps) {
             transition={{ type: "spring", stiffness: 200, damping: 20, mass: 1 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 1 }}
+            onClick={(e) => {
+              e.stopPropagation(); // 阻止事件冒泡到相框
+              handleImageClick(imageSrc);
+            }}
+            style={{ cursor: 'pointer' }}
           />
         ))}
       </div>

@@ -20,17 +20,8 @@ export default function GalleryWall(props: GalleryWallProps) {
             nameTag={pictureProps.nameTag}
             timeTag={pictureProps.timeTag}
             rotate={0} // 强制不倾斜
-            onClick={() => {
-              // 如果有外部链接，在新窗口打开
-              if (pictureProps.herf && pictureProps.herf !== "") {
-                window.open(pictureProps.herf, "_blank");
-              } else {
-                // 否则调用父组件的图片查看器打开函数（默认显示第一张图片）
-                if (pictureProps.imageList.length > 0) {
-                  props.onImageClick(pictureProps.imageList[0], pictureProps.nameTag, pictureProps.timeTag);
-                }
-              }
-            }}
+            herf={pictureProps.herf}
+            onClick={props.onImageClick} // 直接传递点击处理函数
           ></FramedPicture>
         ))}
       </div>
