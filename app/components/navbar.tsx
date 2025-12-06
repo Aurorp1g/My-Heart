@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import styles from "./navbar.module.css";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const pathname = usePathname();
 
   // 检查认证状态
   useEffect(() => {
@@ -61,6 +63,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // 检查当前页面是否匹配
+  const isCurrentPage = (path: string) => {
+    if (path === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(path);
+  };
+
   // 重新加密功能
   const handleReEncrypt = () => {
     // 清除认证信息
@@ -92,13 +102,25 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className={styles.menu}>
-          <Link href="/" className={styles.menuLink}>
+          <Link 
+            href="/" 
+            className={styles.menuLink}
+            data-active={isCurrentPage('/')}
+          >
             🏠 首页
           </Link>
-          <Link href="/gallery-wall" className={styles.menuLink}>
+          <Link 
+            href="/gallery-wall" 
+            className={styles.menuLink}
+            data-active={isCurrentPage('/gallery-wall')}
+          >
             📸 照片墙
           </Link>
-          <Link href="/letter-gallery" className={styles.menuLink}>
+          <Link 
+            href="/letter-gallery" 
+            className={styles.menuLink}
+            data-active={isCurrentPage('/letter-gallery')}
+          >
             💌 信廊
           </Link>
           
@@ -127,13 +149,28 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <div className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : ''}`}>
-          <Link href="/" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
+          <Link 
+            href="/" 
+            className={styles.mobileMenuLink} 
+            onClick={() => setIsMenuOpen(false)}
+            data-active={isCurrentPage('/')}
+          >
             🏠 首页
           </Link>
-          <Link href="/gallery-wall" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
+          <Link 
+            href="/gallery-wall" 
+            className={styles.mobileMenuLink} 
+            onClick={() => setIsMenuOpen(false)}
+            data-active={isCurrentPage('/gallery-wall')}
+          >
             📸 照片墙
           </Link>
-          <Link href="/letter-gallery" className={styles.mobileMenuLink} onClick={() => setIsMenuOpen(false)}>
+          <Link 
+            href="/letter-gallery" 
+            className={styles.mobileMenuLink} 
+            onClick={() => setIsMenuOpen(false)}
+            data-active={isCurrentPage('/letter-gallery')}
+          >
             💌 信廊
           </Link>
           
