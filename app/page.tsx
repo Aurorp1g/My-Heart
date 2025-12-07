@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Layout from "./components/layout";
 import styles from "./home.module.css";
-import ClientAuthGuard from "./components/client-auth-guard";
+import ClientAuthGuard from "./auth/client-auth-guard";
 
 const welcomeMessage = "welcome to my heart💕";
 const typingSpeed = 100; // 打字速度（毫秒）

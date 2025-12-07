@@ -4,7 +4,7 @@ import { FramedPictureProps } from "../gallery-wall/components/framed-picture";
 import GalleryWall from "../gallery-wall/components/gallery-wall";
 import ImageViewer from "../gallery-wall/components/image-viewer";
 import Layout from "../components/layout";
-import ClientAuthGuard from "../components/client-auth-guard";
+import ClientAuthGuard from "../auth/client-auth-guard";
 import styles from "../gallery-wall/styles.module.css";
 import { useState, useEffect } from "react";
 

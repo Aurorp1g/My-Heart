@@ -5,7 +5,7 @@ import GalleryWall from "./components/letter-gallery";
 import ImageViewer from "./components/image-viewer";
 import Layout from "../components/layout";
 import styles from "./styles.module.css";
-import ClientAuthGuard from "../components/client-auth-guard";
+import ClientAuthGuard from "../auth/client-auth-guard";
 import { useState, useEffect } from "react";
 
 interface LetterGalleryConfig {
