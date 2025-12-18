@@ -1,12 +1,13 @@
 "use client";
 
-import { FramedPictureProps } from "../gallery-wall/components/framed-picture";
-import GalleryWall from "../gallery-wall/components/gallery-wall";
-import ImageViewer from "../gallery-wall/components/image-viewer";
+import { useState, useEffect } from "react";
+import { FramedPictureProps } from "./components/framed-picture";
+import GalleryWall from "./components/gallery-wall";
+import ImageViewer from "./components/image-viewer";
 import Layout from "../components/layout";
 import ClientAuthGuard from "../auth/client-auth-guard";
-import styles from "../gallery-wall/styles.module.css";
-import { useState, useEffect } from "react";
+import styles from "./styles.module.css";
+import { imageLoader } from "../utils/image-loader";
 
 interface GalleryWallConfig {
   backgroundImage: string;
@@ -14,21 +15,22 @@ interface GalleryWallConfig {
   picturePropsList: FramedPictureProps[];
 }
 
-export default function Home() {
-  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
+export default function GalleryWallPage() {
+  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
   const [config, setConfig] = useState<GalleryWallConfig>({
     backgroundImage: "",
     randomOrder: false,
     picturePropsList: [],
   });
+  const [backgroundStyle, setBackgroundStyle] = useState({});
 
   const [viewerState, setViewerState] = useState<{
     isOpen: boolean;
     imageSrc: string;
     nameTag: string;
     timeTag: string;
-    imageList: string[]; // 新增：图片列表
-    currentIndex: number; // 新增：当前索引
+    imageList: string[];
+    currentIndex: number;
   }>({
     isOpen: false,
     imageSrc: "",
@@ -37,6 +39,24 @@ export default function Home() {
     imageList: [],
     currentIndex: 0
   });
+
+  useEffect(() => {
+    // 加载背景图片
+    const loadBackground = async () => {
+      try {
+        const backgroundImage = await imageLoader.getBackgroundImage('gallery');
+        setBackgroundStyle({ backgroundImage });
+      } catch (error) {
+        console.error('背景图片加载失败:', error);
+        // 使用默认背景
+        const fallbackImage = `url('${assetPrefix}/bg/gallery-background.jpg')`;
+        setBackgroundStyle({ backgroundImage: fallbackImage });
+      }
+    };
+
+    loadBackground();
+    getGalleryWallConfig();
+  }, []);
 
   // Fetch config
   function getGalleryWallConfig() {
@@ -67,14 +87,11 @@ export default function Home() {
             timeTag: props.timeTag,
             herf: props.herf,
           });
-
-          setConfig(result);
         });
+
+        setConfig(result);
       });
   }
-  useEffect(() => {
-    getGalleryWallConfig();
-  }, []);
 
   // Shuffle for random order
   const shuffle = (array: FramedPictureProps[]) => {
@@ -170,11 +187,7 @@ export default function Home() {
         <div className={styles.backgroundContainer}>
           <div 
             className={styles.backgroundImage}
-            style={{ backgroundImage: `url('${config.backgroundImage}')` }}
-          ></div>
-          <div 
-            className={styles.backgroundImage}
-            style={{ backgroundImage: `url('${assetPrefix}/bg/gallery-background.jpg')` }}
+            style={backgroundStyle}
           ></div>
         </div>
         <div className={styles.contentWrapper}>
@@ -184,7 +197,7 @@ export default function Home() {
           />
         </div>
         
-        {/* 图片查看器 - 提升到页面级别，确保z-index生效 */}
+        {/* 图片查看器 */}
         <ImageViewer
           isOpen={viewerState.isOpen}
           imageSrc={viewerState.imageSrc}

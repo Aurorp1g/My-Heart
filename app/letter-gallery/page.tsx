@@ -7,6 +7,7 @@ import Layout from "../components/layout";
 import styles from "./styles.module.css";
 import ClientAuthGuard from "../auth/client-auth-guard";
 import { useState, useEffect } from "react";
+import { imageLoader } from "../utils/image-loader";
 
 interface LetterGalleryConfig {
   backgroundImage: string;
@@ -22,13 +23,16 @@ export default function LetterGalleryPage() {
     letterPropsList: [],
   });
 
+  const [backgroundStyle, setBackgroundStyle] = useState<string>("");
+  const [fallbackBackgroundStyle, setFallbackBackgroundStyle] = useState<string>("");
+
   const [viewerState, setViewerState] = useState<{
     isOpen: boolean;
     imageSrc: string;
     nameTag: string;
     timeTag: string;
-    imageList: string[]; // 新增：图片列表
-    currentIndex: number; // 新增：当前索引
+    imageList: string[];
+    currentIndex: number;
   }>({
     isOpen: false,
     imageSrc: "",
@@ -37,6 +41,35 @@ export default function LetterGalleryPage() {
     imageList: [],
     currentIndex: 0
   });
+
+  // 加载背景图片
+  useEffect(() => {
+    const loadBackgroundImages = async () => {
+      try {
+        // 加载主要背景图片（从配置文件中获取）
+        if (config.backgroundImage && config.backgroundImage !== "") {
+          const mainBgStyle = await imageLoader.getBackgroundImage('letter');
+          setBackgroundStyle(mainBgStyle);
+        } else {
+          // 如果没有配置主要背景图片，使用默认背景图片
+          const defaultBgStyle = await imageLoader.getBackgroundImage('letter');
+          setBackgroundStyle(defaultBgStyle);
+        }
+
+        // 加载备用背景图片
+        const fallbackBgStyle = await imageLoader.getBackgroundImage('letter');
+        setFallbackBackgroundStyle(fallbackBgStyle);
+      } catch (error) {
+        console.error('背景图片加载失败:', error);
+        // 如果加载失败，使用默认背景图片
+        const defaultBgStyle = `url('${assetPrefix}/bg/letter-background.jpg')`;
+        setBackgroundStyle(defaultBgStyle);
+        setFallbackBackgroundStyle(defaultBgStyle);
+      }
+    };
+
+    loadBackgroundImages();
+  }, [config.backgroundImage, assetPrefix]);
 
   // Fetch config
   function getLetterGalleryConfig() {
@@ -196,11 +229,11 @@ export default function LetterGalleryPage() {
         <div className={styles.backgroundContainer}>
           <div 
             className={styles.backgroundImage}
-            style={{ backgroundImage: `url('${config.backgroundImage}')` }}
+            style={{ backgroundImage: backgroundStyle }}
           ></div>
           <div 
             className={styles.backgroundImage}
-            style={{ backgroundImage: `url('${assetPrefix}/bg/letter-background.jpg')` }}
+            style={{ backgroundImage: fallbackBackgroundStyle }}
           ></div>
         </div>
         <div className={styles.contentWrapper}>
