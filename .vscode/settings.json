@@ -1,5 +1,12 @@
 {
   "css.validate": false,
   "less.validate": false,
-  "scss.validate": false
+  "scss.validate": false,
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "terminal.integrated.profiles.windows": {
+      "Git Bash": {
+          "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+          "args": []
+      }
+  }
 }
