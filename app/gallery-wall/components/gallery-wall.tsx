@@ -18,6 +18,7 @@ export default function GalleryWall(props: GalleryWallProps) {
             imageSrc={pictureProps.imageSrc}
             nameTag={pictureProps.nameTag}
             timeTag={pictureProps.timeTag}
+            pinPriority={pictureProps.pinPriority}
             rotate={pictureProps.rotate}
             onClick={() => {
               // 如果有外部链接，在新窗口打开

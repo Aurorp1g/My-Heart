@@ -13,6 +13,7 @@ export interface FramedPictureProps {
   timeTag: string;
   rotate?: number;
   herf?: string;
+  pinPriority?: number;
 }
 
 export default function FramedPicture(props: FramedPictureProps) {
@@ -61,6 +62,9 @@ export default function FramedPicture(props: FramedPictureProps) {
         >
           {props.timeTag}
         </p>
+      )}
+      {props.pinPriority && props.pinPriority > 0 && (
+        <span className={styles.pinTag} title={`置顶优先级: ${props.pinPriority}`}>📌</span>
       )}
     </motion.div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FramedPictureProps } from "./components/framed-picture";
 import GalleryWall from "./components/gallery-wall";
 import ImageViewer from "./components/image-viewer";
@@ -40,26 +40,7 @@ export default function GalleryWallPage() {
     currentIndex: 0
   });
 
-  useEffect(() => {
-    // 加载背景图片
-    const loadBackground = async () => {
-      try {
-        const backgroundImage = await imageLoader.getBackgroundImage('gallery');
-        setBackgroundStyle({ backgroundImage });
-      } catch (error) {
-        console.error('背景图片加载失败:', error);
-        // 使用默认背景
-        const fallbackImage = `url('${assetPrefix}/bg/gallery-background.jpg')`;
-        setBackgroundStyle({ backgroundImage: fallbackImage });
-      }
-    };
-
-    loadBackground();
-    getGalleryWallConfig();
-  }, []);
-
-  // Fetch config
-  function getGalleryWallConfig() {
+  const getGalleryWallConfig = useCallback(() => {
     fetch(`${assetPrefix}/gallery-wall/gallery-wall-config.json`)
       .then((response) => response.json())
       .then((data) => {
@@ -74,24 +55,58 @@ export default function GalleryWallPage() {
           result.backgroundImage = data.backgroundImage;
         }
 
-        // Random order
+        // Random显示 📌 标签 order
         if (data.randomOrder) {
           result.randomOrder = data.randomOrder;
         }
 
-        // Picture props list
+        // Picture props list - add pinPriority support
         (data.pictureList as FramedPictureProps[]).forEach((props) => {
           result.picturePropsList.push({
             imageSrc: `${assetPrefix}${props.imageSrc}`,
             nameTag: props.nameTag,
             timeTag: props.timeTag,
             herf: props.herf,
+            pinPriority: props.pinPriority,
           });
+        });
+
+        // Sort by time (descending) and pin priority
+        result.picturePropsList.sort((a, b) => {
+          // Pinned items first (by priority, higher first)
+          if (a.pinPriority && b.pinPriority) {
+            if (a.pinPriority !== b.pinPriority) {
+              return b.pinPriority - a.pinPriority;
+            }
+          } else if (a.pinPriority) {
+            return -1; // a is pinned, b is not
+          } else if (b.pinPriority) {
+            return 1; // b is pinned, a is not
+          }
+          
+          // Then sort by timeTag (descending)
+          return b.timeTag.localeCompare(a.timeTag);
         });
 
         setConfig(result);
       });
-  }
+  }, [assetPrefix]);
+
+  useEffect(() => {
+    const loadBackground = async () => {
+      try {
+        const backgroundImage = await imageLoader.getBackgroundImage('gallery');
+        setBackgroundStyle({ backgroundImage });
+      } catch (error) {
+        console.error('背景图片加载失败:', error);
+        const fallbackImage = `url('${assetPrefix}/bg/gallery-background.jpg')`;
+        setBackgroundStyle({ backgroundImage: fallbackImage });
+      }
+    };
+
+    loadBackground();
+    getGalleryWallConfig();
+  }, [assetPrefix, getGalleryWallConfig]);
 
   // Shuffle for random order
   const shuffle = (array: FramedPictureProps[]) => {

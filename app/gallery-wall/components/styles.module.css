@@ -47,6 +47,15 @@
   color:rgb(58, 58, 58);
 }
 
+.pinTag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 1.6rem;
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
 /* 图片查看器特殊样式 */
 .imageViewerBackdrop {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9), rgba(240, 147, 251, 0.9));
