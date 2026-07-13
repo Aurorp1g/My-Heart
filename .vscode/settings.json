@@ -8,5 +8,6 @@
           "path": "C:\\Program Files\\Git\\bin\\bash.exe",
           "args": []
       }
-  }
+},
+"python-envs.defaultEnvManager": "ms-python.python:system"
 }
