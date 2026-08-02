@@ -8,6 +8,7 @@ import Layout from "../components/layout";
 import ClientAuthGuard from "../auth/client-auth-guard";
 import styles from "./styles.module.css";
 import { imageLoader } from "../utils/image-loader";
+import { getRelativePath } from "../utils/path-helper";
 
 interface GalleryWallConfig {
   backgroundImage: string;
@@ -16,7 +17,6 @@ interface GalleryWallConfig {
 }
 
 export default function GalleryWallPage() {
-  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
   const [config, setConfig] = useState<GalleryWallConfig>({
     backgroundImage: "",
     randomOrder: false,
@@ -41,7 +41,7 @@ export default function GalleryWallPage() {
   });
 
   const getGalleryWallConfig = useCallback(() => {
-    fetch(`${assetPrefix}/gallery-wall/gallery-wall-config.json`)
+    fetch(getRelativePath('/gallery-wall/gallery-wall-config.json'))
       .then((response) => response.json())
       .then((data) => {
         let result: GalleryWallConfig = {
@@ -50,20 +50,17 @@ export default function GalleryWallPage() {
           picturePropsList: [],
         };
 
-        // Background image
         if (data.backgroundImage != "" && data.backgroundImage) {
           result.backgroundImage = data.backgroundImage;
         }
 
-        // Random显示 📌 标签 order
         if (data.randomOrder) {
           result.randomOrder = data.randomOrder;
         }
 
-        // Picture props list - add pinPriority support
         (data.pictureList as FramedPictureProps[]).forEach((props) => {
           result.picturePropsList.push({
-            imageSrc: `${assetPrefix}${props.imageSrc}`,
+            imageSrc: getRelativePath(props.imageSrc),
             nameTag: props.nameTag,
             timeTag: props.timeTag,
             herf: props.herf,
@@ -71,26 +68,23 @@ export default function GalleryWallPage() {
           });
         });
 
-        // Sort by time (descending) and pin priority
         result.picturePropsList.sort((a, b) => {
-          // Pinned items first (by priority, higher first)
           if (a.pinPriority && b.pinPriority) {
             if (a.pinPriority !== b.pinPriority) {
               return b.pinPriority - a.pinPriority;
             }
           } else if (a.pinPriority) {
-            return -1; // a is pinned, b is not
+            return -1;
           } else if (b.pinPriority) {
-            return 1; // b is pinned, a is not
+            return 1;
           }
           
-          // Then sort by timeTag (descending)
           return b.timeTag.localeCompare(a.timeTag);
         });
 
         setConfig(result);
       });
-  }, [assetPrefix]);
+  }, []);
 
   useEffect(() => {
     const loadBackground = async () => {
@@ -99,14 +93,14 @@ export default function GalleryWallPage() {
         setBackgroundStyle({ backgroundImage });
       } catch (error) {
         console.error('背景图片加载失败:', error);
-        const fallbackImage = `url('${assetPrefix}/bg/gallery-background.jpg')`;
+        const fallbackImage = `url('${getRelativePath('/bg/gallery-background.jpg')}')`;
         setBackgroundStyle({ backgroundImage: fallbackImage });
       }
     };
 
     loadBackground();
     getGalleryWallConfig();
-  }, [assetPrefix, getGalleryWallConfig]);
+  }, [getGalleryWallConfig]);
 
   // Shuffle for random order
   const shuffle = (array: FramedPictureProps[]) => {

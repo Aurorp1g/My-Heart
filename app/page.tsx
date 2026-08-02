@@ -28,9 +28,7 @@ export default function Home() {
         });
       } catch (error) {
         console.error('背景图片加载失败:', error);
-        // 使用默认背景
-        const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || '';
-        const fallbackImage = `url('${assetPrefix}/bg/home-background.jpg')`;
+        const fallbackImage = `url('./bg/home-background.jpg')`;
         setBackgroundStyle({ 
           background: `${fallbackImage} center/cover no-repeat fixed` 
         });

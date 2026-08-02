@@ -8,6 +8,7 @@ import styles from "./styles.module.css";
 import ClientAuthGuard from "../auth/client-auth-guard";
 import { useState, useEffect } from "react";
 import { imageLoader } from "../utils/image-loader";
+import { getRelativePath } from "../utils/path-helper";
 
 interface LetterGalleryConfig {
   backgroundImage: string;
@@ -16,7 +17,6 @@ interface LetterGalleryConfig {
 }
 
 export default function LetterGalleryPage() {
-  const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
   const [config, setConfig] = useState<LetterGalleryConfig>({
     backgroundImage: "",
     randomOrder: false,
@@ -61,19 +61,18 @@ export default function LetterGalleryPage() {
         setFallbackBackgroundStyle(fallbackBgStyle);
       } catch (error) {
         console.error('背景图片加载失败:', error);
-        // 如果加载失败，使用默认背景图片
-        const defaultBgStyle = `url('${assetPrefix}/bg/letter-background.jpg')`;
+        const defaultBgStyle = `url('${getRelativePath('/bg/letter-background.jpg')}')`;
         setBackgroundStyle(defaultBgStyle);
         setFallbackBackgroundStyle(defaultBgStyle);
       }
     };
 
     loadBackgroundImages();
-  }, [config.backgroundImage, assetPrefix]);
+  }, [config.backgroundImage]);
 
   // Fetch config
   function getLetterGalleryConfig() {
-    fetch(`${assetPrefix}/letter-gallery/letter-gallery-config.json`)
+    fetch(getRelativePath('/letter-gallery/letter-gallery-config.json'))
       .then((response) => response.json())
       .then((data) => {
         let result: LetterGalleryConfig = {
@@ -94,11 +93,10 @@ export default function LetterGalleryPage() {
 
         // Letter props list - 适配新的多图片数据结构
         (data.letterList as any[]).forEach((props) => {
-          // 处理多图片路径，为每个图片路径添加动态前缀
           const imageList = props.imageList 
-            ? props.imageList.map((img: string) => `${assetPrefix}${img}`)
+            ? props.imageList.map((img: string) => getRelativePath(img))
             : props.imageSrc 
-              ? [`${assetPrefix}${props.imageSrc}`] // 兼容旧格式
+              ? [getRelativePath(props.imageSrc)] 
               : [];
 
           result.letterPropsList.push({

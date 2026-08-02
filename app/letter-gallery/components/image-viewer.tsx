@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./styles.module.css";
 
 interface ImageViewerProps {
@@ -61,23 +61,22 @@ export default function ImageViewer({
     };
   }, [isOpen]);
 
-  // 重置状态
-  const resetState = () => {
-    setScale(1);
-    setPosition({ x: 0, y: 0 });
-  };
-
   // 关闭时重置
   useEffect(() => {
     if (!isOpen) {
-      resetState();
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
     }
   }, [isOpen]);
+
+  const resetZoom = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
 
   // 缩放功能
   const zoomIn = () => setScale(prev => Math.min(prev + 0.2, 3));
   const zoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.5));
-  const resetZoom = () => resetState();
 
   // 鼠标滚轮缩放
   const handleWheel = (e: React.WheelEvent) => {
@@ -143,7 +142,7 @@ export default function ImageViewer({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose, hasPrev, hasNext, onPrev, onNext]);
+  }, [isOpen, onClose, hasPrev, hasNext, onPrev, onNext, resetZoom]);
 
   return (
     <AnimatePresence>
